@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - "*"
+env:
+  TAG: ${{ github.ref_name }}
 
 jobs:
   build-and-push:
@@ -22,10 +24,6 @@ jobs:
           username: ${{ vars.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Extract tag version
-        id: tag
-        run: echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
@@ -42,6 +40,9 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Install SSH key
         uses: webfactory/ssh-agent@v0.8.0
         with:
