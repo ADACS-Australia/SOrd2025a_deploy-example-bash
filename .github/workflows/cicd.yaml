@@ -55,8 +55,9 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
 
       - name: Add Setonix to known hosts
-        run: ssh-keyscan setonix.pawsey.org.au >> ~/.ssh/known_hosts
+        run: ssh-keyscan -H setonix.pawsey.org.au >> ~/.ssh/known_hosts
 
       - name: Execute remote deployment
         run: |
-          ssh -vvv -Y -o StrictHostKeyChecking=yes ksmith1@setonix.pawsey.org.au 'bash -s' < make_modulefile.sh /software/projects/askaprt/ksmith1 docker://ksmith21/hello-world ${{ env.TAG }}
+          ssh -vvv -Y -i ~/.shh/id_rsa -o StrictHostKeyChecking=yes ksmith1@setonix.pawsey.org.au "echo 'hello from github'"
+          # ssh -vvv -Y -i ~/.shh/id_rsa -o StrictHostKeyChecking=yes ksmith1@setonix.pawsey.org.au 'bash -s' < make_modulefile.sh /software/projects/askaprt/ksmith1 docker://ksmith21/hello-world ${{ env.TAG }}
