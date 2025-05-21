@@ -43,15 +43,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # - name: Install SSH key
-      #   uses: webfactory/ssh-agent@v0.8.0
-      #   with:
-      #     ssh-private-key: ${{ secrets.PAWSEY_SSH_KEY }}
-
-      - name: Set up SSH from base64-encoded key
+      - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.PAWSEY_SSH_KEY }}" | base64 -d > ~/.ssh/id_rsa
+          echo "${{ secrets.PAWSEY_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
       - name: Add Setonix to known hosts
@@ -59,5 +54,4 @@ jobs:
 
       - name: Execute remote deployment
         run: |
-          ssh -vvv -Y -i ~/.ssh/id_rsa -o StrictHostKeyChecking=yes ksmith1@setonix.pawsey.org.au "echo 'hello from github'"
-          # ssh -vvv -Y -i ~/.shh/id_rsa -o StrictHostKeyChecking=yes ksmith1@setonix.pawsey.org.au 'bash -s' < make_modulefile.sh /software/projects/askaprt/ksmith1 docker://ksmith21/hello-world ${{ env.TAG }}
+          ssh -v -Y -i ~/.shh/id_rsa -o StrictHostKeyChecking=yes ksmith1@setonix.pawsey.org.au 'bash -s' < make_modulefile.sh /software/projects/askaprt/ksmith1 docker://ksmith21/hello-world ${{ env.TAG }}
