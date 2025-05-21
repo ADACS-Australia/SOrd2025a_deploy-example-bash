@@ -48,17 +48,10 @@ jobs:
       #   with:
       #     ssh-private-key: ${{ secrets.PAWSEY_SSH_KEY }}
 
-      - name: Set up SSH
+      - name: Set up SSH from base64-encoded key
         run: |
-          # command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )
-          # eval $(ssh-agent -s)
-          # echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          # chmod 400 ~/.ssh/id_rsa
-          # ssh-add ~/.ssh/id_rsa
-          # chmod 700 ~/.ssh
-          # ssh-keyscan setonix.pawsey.org.au >> ~/.ssh/known_hosts
           mkdir -p ~/.ssh
-          echo ${{ secrets.SSH_PRIVATE_KEY }} > ~/.ssh/id_rsa
+          echo "${{ secrets.PAWSEY_SSH_KEY }}" | base64 -d > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
       - name: Add Setonix to known hosts
@@ -66,4 +59,4 @@ jobs:
 
       - name: Execute remote deployment
         run: |
-          ssh -vvv -Y ksmith1@setonix.pawsey.org.au 'bash -s' < make_modulefile.sh /software/projects/askaprt/ksmith1 docker://ksmith21/hello-world ${{ env.TAG }}
+          ssh -vvv -o StrictHostKeyChecking=yes ksmith1@setonix.pawsey.org.au 'bash -s' < make_modulefile.sh /software/projects/askaprt/ksmith1 docker://ksmith21/hello-world ${{ env.TAG }}
